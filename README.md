@@ -74,3 +74,4 @@ terror"
 10
 >>>exit
 ullas@ULLAS:~/gpro/NumPy$ </code>
+![alt text](image-2.png)
