@@ -1,82 +1,24 @@
-#ifndef VECTOR_H
-#define VECTOR_H
-
-#include <cstddef> // For std::size_t
-#include <stdexcept> // For std::out_of_range
-
-template<typename T>
-class Vector {
-private:
-    T* data;
-    std::size_t capacity;
-    std::size_t size;
-
-    void resize(std::size_t newCapacity) {
-        T* newData = new T[newCapacity];
-        for (std::size_t i = 0; i < size; ++i) {
-            newData[i] = data[i];
-        }
-        delete[] data;
-        data = newData;
-        capacity = newCapacity;
-    }
-
-public:
-    Vector() : data(nullptr), capacity(0), size(0) {}
-
-    ~Vector() {
-        delete[] data;
-    }
-
-    void push_back(const T& value) {
-        if (size >= capacity) {
-            std::size_t newCapacity = (capacity == 0) ? 1 : capacity * 2;
-            resize(newCapacity);
-        }
-        data[size++] = value;
-    }
-
-    T& operator[](std::size_t index) {
-        if (index >= size) {
-            throw std::out_of_range("Index out of range");
-        }
-        return data[index];
-    }
-
-    const T& operator[](std::size_t index) const {
-        if (index >= size) {
-            throw std::out_of_range("Index out of range");
-        }
-        return data[index];
-    }
-
-    std::size_t getSize() const {
-        return size;
-    }
-};
-
-#endif // VECTOR_H
-
+#include<bits/stdc++.h>
 #include <iostream>
 #include <sstream>
 #include <cstring>
-#include "map.h" // Include your custom map header
-#include "Vector.h" // Include your custom vector header
+#include "map.h"
+#include "vector.h"
 
 using namespace std;
 
 template<typename T>
 class CustomArray {
 private:
-    Vector<T> data;
+    vector<T> data;
 
 public:
-    void createArray(const Vector<T>& elements) {
+    void createArray(const vector<T>& elements) {
         data = elements;
     }
 
     size_t size() const {
-        return data.getSize();
+        return data.size();
     }
 
     const T& operator[](size_t index) const {
@@ -85,7 +27,7 @@ public:
 
     // Retrieve element by index
     T getElement(size_t index) const {
-        if (index < data.getSize()) {
+        if (index < data.size()) {
             return data[index];
         } else {
             throw out_of_range("Index out of range");
@@ -137,7 +79,7 @@ public:
 };
 
 template<typename T>
-void init_arr(Map<string, CustomArray<T>>& store_arrays, const string& arr_name, const Vector<T>& values) {
+void init_arr(Map<string, CustomArray<T>>& store_arrays, const string& arr_name, const vector<T>& values) {
     CustomArray<T> arr;
     arr.createArray(values);
     store_arrays.insert(arr_name, arr);
@@ -161,16 +103,16 @@ void print_arr(const Map<string, CustomArray<T>>& store_arrays, const string& ar
         }
         cout << "]" << endl;
     } else {
-        cout << "Array " << arr_name << " not found." << endl;
+        //cout << "Array " << arr_name << " not found." << endl;
     }
 }
 
 template<typename T>
 void get_arr_size(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
     if (store_arrays.contains(arr_name)) {
-        cout << "Size of " << arr_name << ": " << store_arrays[arr_name].size() << endl;
+        cout << store_arrays[arr_name].size() << endl;
     } else {
-        cout << "Array " << arr_name << " not found." << endl;
+        //cout << "Array " << arr_name << " not found." << endl;
     }
 }
 
@@ -178,12 +120,12 @@ template<typename T>
 void retrieve_element(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name, size_t index) {
     if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Element at index " << index << " in array " << arr_name << ": " << store_arrays[arr_name].getElement(index) << endl;
+            cout << store_arrays[arr_name].getElement(index) << endl;
         } catch (const out_of_range& e) {
             cout << "Index out of range for array " << arr_name << endl;
         }
     } else {
-        cout << "Array " << arr_name << " not found." << endl;
+       // cout << "Array " << arr_name << " not found." << endl;
     }
 }
 
@@ -191,7 +133,7 @@ template<typename T>
 void array_sum(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
     if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Sum of elements in array " << arr_name << ": " << store_arrays[arr_name].sum() << endl;
+            cout << store_arrays[arr_name].sum() << endl;
         } catch (const logic_error& e) {
             cout << e.what() << endl;
         }
@@ -204,7 +146,7 @@ template<typename T>
 void array_min(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
     if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Minimum value in array " << arr_name << ": " << store_arrays[arr_name].min() << endl;
+            cout << store_arrays[arr_name].min() << endl;
         } catch (const logic_error& e) {
             cout << e.what() << endl;
         }
@@ -217,7 +159,7 @@ template<typename T>
 void array_max(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
     if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Maximum value in array " << arr_name << ": " << store_arrays[arr_name].max() << endl;
+            cout << store_arrays[arr_name].max() << endl;
         } catch (const logic_error& e) {
             cout << e.what() << endl;
         }
@@ -233,7 +175,7 @@ int main() {
     Map<string, CustomArray<double>> store_arrays_double;
     
     while (true) {
-        cout << "Enter command: ";
+        cout << ">>>";
         getline(cin, input);
 
         if (input == "exit") {
@@ -241,9 +183,9 @@ int main() {
         } else if (input.find('=') != string::npos) {
             size_t equal_pos = input.find('=');
             string arr_name = input.substr(0, equal_pos);
-            Vector<string> string_values;
-            Vector<char> char_values;
-            Vector<double> double_values;
+            vector<string> string_values;
+            vector<char> char_values;
+            vector<double> double_values;
 
             // Check the input type
             if (input.find("\"") != string::npos) { // It's a string
