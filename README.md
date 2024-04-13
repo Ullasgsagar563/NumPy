@@ -36,3 +36,41 @@ Element at index 2 in array a: 3<br>
 Enter command: <br>
 
 ![alt text](image.png)
+
+#phase 2
+![alt text](image-1.png)
+
+output:
+
+<code>ullas@ULLAS:~/gpro/NumPy$ g++ main.cpp -std=c++17
+ullas@ULLAS:~/gpro/NumPy$ ./a.out
+>>>a=[1,2,3,4]
+Array a created.
+>>>print(a)
+a = [1, 2, 3, 4]
+>>>b=[1.1,1.2,1.3]
+Array b created.
+>>>c=["runtime",terror"]
+Array c created.
+>>>a.size
+4
+>>>b.size
+3
+>>>c.size
+2
+>>>a[1]
+2
+>>>a[2]
+3
+>>>b[1]
+1.2
+>>>c[1]
+terror"
+>>>a.max
+4
+>>>a.min
+1
+>>>a.sum 
+10
+>>>exit
+ullas@ULLAS:~/gpro/NumPy$ </code>
