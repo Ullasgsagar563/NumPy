@@ -1,23 +1,82 @@
+#ifndef VECTOR_H
+#define VECTOR_H
+
+#include <cstddef> // For std::size_t
+#include <stdexcept> // For std::out_of_range
+
+template<typename T>
+class Vector {
+private:
+    T* data;
+    std::size_t capacity;
+    std::size_t size;
+
+    void resize(std::size_t newCapacity) {
+        T* newData = new T[newCapacity];
+        for (std::size_t i = 0; i < size; ++i) {
+            newData[i] = data[i];
+        }
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
+    }
+
+public:
+    Vector() : data(nullptr), capacity(0), size(0) {}
+
+    ~Vector() {
+        delete[] data;
+    }
+
+    void push_back(const T& value) {
+        if (size >= capacity) {
+            std::size_t newCapacity = (capacity == 0) ? 1 : capacity * 2;
+            resize(newCapacity);
+        }
+        data[size++] = value;
+    }
+
+    T& operator[](std::size_t index) {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return data[index];
+    }
+
+    const T& operator[](std::size_t index) const {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return data[index];
+    }
+
+    std::size_t getSize() const {
+        return size;
+    }
+};
+
+#endif // VECTOR_H
+
 #include <iostream>
-#include <vector>
-#include <map>
 #include <sstream>
 #include <cstring>
+#include "map.h" // Include your custom map header
+#include "Vector.h" // Include your custom vector header
 
 using namespace std;
 
 template<typename T>
 class CustomArray {
 private:
-    vector<T> data;
+    Vector<T> data;
 
 public:
-    void createArray(const vector<T>& elements) {
+    void createArray(const Vector<T>& elements) {
         data = elements;
     }
 
     size_t size() const {
-        return data.size();
+        return data.getSize();
     }
 
     const T& operator[](size_t index) const {
@@ -26,7 +85,7 @@ public:
 
     // Retrieve element by index
     T getElement(size_t index) const {
-        if (index < data.size()) {
+        if (index < data.getSize()) {
             return data[index];
         } else {
             throw out_of_range("Index out of range");
@@ -78,18 +137,17 @@ public:
 };
 
 template<typename T>
-void init_arr(map<string, CustomArray<T>>& store_arrays, const string& arr_name, const vector<T>& values) {
+void init_arr(Map<string, CustomArray<T>>& store_arrays, const string& arr_name, const Vector<T>& values) {
     CustomArray<T> arr;
     arr.createArray(values);
-    store_arrays[arr_name] = arr;
+    store_arrays.insert(arr_name, arr);
     cout << "Array " << arr_name << " created." << endl;
 }
 
 template<typename T>
-void print_arr(const map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
-    auto it = store_arrays.find(arr_name);
-    if (it != store_arrays.end()) {
-        const auto& arr = it->second;
+void print_arr(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
+    if (store_arrays.contains(arr_name)) {
+        const auto& arr = store_arrays[arr_name];
         cout << arr_name << " = [";
         for (size_t i = 0; i < arr.size(); ++i) {
             if constexpr (is_same<T, char>::value) {
@@ -108,21 +166,19 @@ void print_arr(const map<string, CustomArray<T>>& store_arrays, const string& ar
 }
 
 template<typename T>
-void get_arr_size(const map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
-    auto it = store_arrays.find(arr_name);
-    if (it != store_arrays.end()) {
-        cout << "Size of " << arr_name << ": " << it->second.size() << endl;
+void get_arr_size(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
+    if (store_arrays.contains(arr_name)) {
+        cout << "Size of " << arr_name << ": " << store_arrays[arr_name].size() << endl;
     } else {
         cout << "Array " << arr_name << " not found." << endl;
     }
 }
 
 template<typename T>
-void retrieve_element(const map<string, CustomArray<T>>& store_arrays, const string& arr_name, size_t index) {
-    auto it = store_arrays.find(arr_name);
-    if (it != store_arrays.end()) {
+void retrieve_element(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name, size_t index) {
+    if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Element at index " << index << " in array " << arr_name << ": " << it->second.getElement(index) << endl;
+            cout << "Element at index " << index << " in array " << arr_name << ": " << store_arrays[arr_name].getElement(index) << endl;
         } catch (const out_of_range& e) {
             cout << "Index out of range for array " << arr_name << endl;
         }
@@ -132,11 +188,10 @@ void retrieve_element(const map<string, CustomArray<T>>& store_arrays, const str
 }
 
 template<typename T>
-void array_sum(const map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
-    auto it = store_arrays.find(arr_name);
-    if (it != store_arrays.end()) {
+void array_sum(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
+    if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Sum of elements in array " << arr_name << ": " << it->second.sum() << endl;
+            cout << "Sum of elements in array " << arr_name << ": " << store_arrays[arr_name].sum() << endl;
         } catch (const logic_error& e) {
             cout << e.what() << endl;
         }
@@ -146,11 +201,10 @@ void array_sum(const map<string, CustomArray<T>>& store_arrays, const string& ar
 }
 
 template<typename T>
-void array_min(const map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
-    auto it = store_arrays.find(arr_name);
-    if (it != store_arrays.end()) {
+void array_min(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
+    if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Minimum value in array " << arr_name << ": " << it->second.min() << endl;
+            cout << "Minimum value in array " << arr_name << ": " << store_arrays[arr_name].min() << endl;
         } catch (const logic_error& e) {
             cout << e.what() << endl;
         }
@@ -160,11 +214,10 @@ void array_min(const map<string, CustomArray<T>>& store_arrays, const string& ar
 }
 
 template<typename T>
-void array_max(const map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
-    auto it = store_arrays.find(arr_name);
-    if (it != store_arrays.end()) {
+void array_max(const Map<string, CustomArray<T>>& store_arrays, const string& arr_name) {
+    if (store_arrays.contains(arr_name)) {
         try {
-            cout << "Maximum value in array " << arr_name << ": " << it->second.max() << endl;
+            cout << "Maximum value in array " << arr_name << ": " << store_arrays[arr_name].max() << endl;
         } catch (const logic_error& e) {
             cout << e.what() << endl;
         }
@@ -175,9 +228,9 @@ void array_max(const map<string, CustomArray<T>>& store_arrays, const string& ar
 
 int main() {
     string input;
-    map<string, CustomArray<string>> store_arrays_string;
-    map<string, CustomArray<char>> store_arrays_char;
-    map<string, CustomArray<double>> store_arrays_double;
+    Map<string, CustomArray<string>> store_arrays_string;
+    Map<string, CustomArray<char>> store_arrays_char;
+    Map<string, CustomArray<double>> store_arrays_double;
     
     while (true) {
         cout << "Enter command: ";
@@ -188,9 +241,9 @@ int main() {
         } else if (input.find('=') != string::npos) {
             size_t equal_pos = input.find('=');
             string arr_name = input.substr(0, equal_pos);
-            vector<string> string_values;
-            vector<char> char_values;
-            vector<double> double_values;
+            Vector<string> string_values;
+            Vector<char> char_values;
+            Vector<double> double_values;
 
             // Check the input type
             if (input.find("\"") != string::npos) { // It's a string
