@@ -42,7 +42,7 @@ Enter command: <br>
 
 output:
 
-<code>ullas@ULLAS:~/gpro/NumPy$ g++ main.cpp -std=c++17
+<p>ullas@ULLAS:~/gpro/NumPy$ g++ main.cpp -std=c++17
 ullas@ULLAS:~/gpro/NumPy$ ./a.out
 >>>a=[1,2,3,4]
 Array a created.
@@ -73,4 +73,4 @@ terror"
 >>>a.sum 
 10
 >>>exit
-ullas@ULLAS:~/gpro/NumPy$ </code>
+ullas@ULLAS:~/gpro/NumPy$ </p>
