@@ -1,20 +1,20 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef vECTOR_H
+#define vECTOR_H
 
 #include <cstddef> // for size_t
 #include <stdexcept> // for exceptions
 
 template<typename T>
-class Vector {
+class vector {
 private:
     T* data;
     size_t capacity;
     size_t size;
 
 public:
-    Vector() : data(nullptr), capacity(0), size(0) {}
-    explicit Vector(size_t initial_capacity) : data(new T[initial_capacity]), capacity(initial_capacity), size(0) {}
-    ~Vector() { delete[] data; }
+    vector() : data(nullptr), capacity(0), size(0) {}
+    explicit vector(size_t initial_capacity) : data(new T[initial_capacity]), capacity(initial_capacity), size(0) {}
+    ~vector() { delete[] data; }
 
     void push_back(const T& value) {
         if (size == capacity) {
@@ -51,4 +51,4 @@ public:
     }
 };
 
-#endif // VECTOR_H
+#endif // vECTOR_H
