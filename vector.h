@@ -1,5 +1,5 @@
-#ifndef vECTOR_H
-#define vECTOR_H
+#ifndef VECTOR_H
+#define VECTOR_H
 
 #include <cstddef> // for size_t
 #include <stdexcept> // for exceptions
@@ -51,4 +51,4 @@ public:
     }
 };
 
-#endif // vECTOR_H
+#endif // VECTOR_H
